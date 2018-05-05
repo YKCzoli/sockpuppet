@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+
+  tpl_db:
+    container_name: tpl_db
+    image: postgres:alpine
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+    volumes:
+      - ./create_table.sql:/docker-entrypoint-initdb.d/1-create_table.sql
+    ports:
+      - 5432:5432
+
+  tpl_service:
+    container_name: tpl_service
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+      - 80:80
+    # env_file:
+      # - .env
+
+    links:
+      - tpl_db

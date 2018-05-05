@@ -1,0 +1,1 @@
+CREATE TABLE tpl_searches(terms text, browser varchar(30));
