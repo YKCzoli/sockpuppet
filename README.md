@@ -46,4 +46,4 @@ SELECT * FROM tpl_searches LIMIT 5;
 
 ### Where can i learn more about the script itself?
 
-The repo [here](https://github.com/oliver006/sockpuppet) has an indepth explanation of the set up.
+The repo [here](https://github.com/oliver006/sockpuppet) has an indepth explanation of the actual socket script.
