@@ -1,1 +1,1 @@
-CREATE TABLE tpl_searches(terms text, browser varchar(30));
+CREATE TABLE tpl_searches(terms text, browser varchar(30), row_created_ TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT clock_timestamp());

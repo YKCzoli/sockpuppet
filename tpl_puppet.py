@@ -3,6 +3,8 @@
 import json
 import logging
 import psycopg2
+import pytz
+from datetime import datetime
 
 import tornado.gen
 import tornado.options
@@ -22,6 +24,7 @@ host = os.getenv("HOST")
 password = os.getenv("PASSWORD")
 port = os.getenv("PORT")
 
+
 def parse_payload(data):
     try:
         data_list = json.loads(data)
@@ -39,6 +42,8 @@ def connect_and_read_websocket():
 
     connection = "dbname={} user={} host={} password={} port={}".format(dbname, user, host, password, port)
     url = "ws://dashboard.tpllabs.ca:4571/rtsearches"
+    query = "INSERT INTO tpl_searches (terms, browser) VALUES (%s, %s);"
+
     try:
         logging.info("connecting to: %s", url)
         w = yield tornado.websocket.websocket_connect(url, connect_timeout=5)
@@ -47,11 +52,9 @@ def connect_and_read_websocket():
         logging.error("couldn't connect, err: %s", ex)
         return
 
-    conn = psycopg2.connect(connection)
-    cursor = conn.cursor()
-    query = "INSERT INTO tpl_searches (terms, browser) VALUES (%s, %s);"
-
     while True:
+        conn = psycopg2.connect(connection)
+        cursor = conn.cursor()
         payload = yield w.read_message()
         if payload is None:
             logging.error("uh oh, we got disconnected")

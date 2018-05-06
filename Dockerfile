@@ -1,6 +1,6 @@
 FROM python
 
-RUN apt-get update -y && apt-get upgrade
+RUN apt-get update -y && apt-get -y upgrade
 
 ADD ./requirements.txt /requirements.txt
 WORKDIR /

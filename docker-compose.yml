@@ -8,6 +8,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
+      - TZ=America/Toronto
     volumes:
       - ./create_table.sql:/docker-entrypoint-initdb.d/1-create_table.sql
     ports:
@@ -18,11 +19,9 @@ services:
     build:
         context: .
         dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-      - 80:80
-    # env_file:
-      # - .env
+    depends_on:
+      - tpl_db
+    command: ["/app/wait-for-it.sh", "tpl_db:5432", "--", "python", "tpl_puppet.py"]
 
     links:
       - tpl_db
