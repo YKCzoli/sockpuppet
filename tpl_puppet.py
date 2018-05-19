@@ -37,12 +37,14 @@ def parse_payload(data):
     return None, None
 
 
+
 @tornado.gen.coroutine
 def connect_and_read_websocket():
 
     connection = "dbname={} user={} host={} password={} port={}".format(dbname, user, host, password, port)
     url = "ws://dashboard.tpllabs.ca:4571/rtsearches"
     query = "INSERT INTO tpl_searches (terms, browser) VALUES (%s, %s);"
+
 
     try:
         logging.info("connecting to: %s", url)
@@ -52,13 +54,15 @@ def connect_and_read_websocket():
         logging.error("couldn't connect, err: %s", ex)
         return
 
+    conn = psycopg2.connect(connection)
+    cursor = conn.cursor()
+
     while True:
-        conn = psycopg2.connect(connection)
-        cursor = conn.cursor()
         payload = yield w.read_message()
         if payload is None:
-            logging.error("uh oh, we got disconnected")
-            return
+            logging.error("uh oh, error in connection")
+            w = yield tornado.websocket.websocket_connect(url, connect_timeout=5)
+            continue
 
         if len(payload):
             try:
@@ -71,7 +75,7 @@ def connect_and_read_websocket():
 
         else:
             logging.warn("unknown paylod: %s", payload.decode('utf8'))
-
+            
 
 if __name__ == '__main__':
     tornado.options.define(name="ws_addr", type=str, help="Address of the websocket host to connect to.")
