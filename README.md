@@ -28,13 +28,7 @@ docker ps -a
 Then enter the container:
 
 ```docker
-docker exec -it <<YOUR_CONTAINER_ID>> /bin/bash
-```
-
-To enter the database as non-root user:
-
-```bash
-psql -U postgres
+docker exec -it <<YOUR_CONTAINER_ID>> psql -U postgres
 ```
 
 Select 5 rows:
